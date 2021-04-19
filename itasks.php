@@ -6,7 +6,7 @@
 /*
 Plugin Name: iTasks
 Plugin URI: 
-Description: iTasks let you add tasks list -> [itasks_shortcode]
+Description: iTasks let you add tasks list.
 Author: John Mark
 Version: 1.0
 Author URI:https://pollyolly.github.io/jmr/ 
