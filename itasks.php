@@ -17,7 +17,7 @@ function itasks_install(){
     global $wpdb;
     global $itasks_db_version;
     $tbl_itasks_tasks = "{$wpdb->prefix}itasks_tasks";
-    $sql .= "CREATE TABLE " . $tbl_itasks_tasks  . " (
+    $sql = "CREATE TABLE " . $tbl_itasks_tasks  . " (
       id int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
       tasks varchar(500) NULL,
       tasks_status varchar(20) NULL,
@@ -31,7 +31,7 @@ function itasks_install(){
     add_option('itasks_db_version', $itasks_db_version);
     $installed_ver = get_option('icb_db_version');
     if ($installed_ver != $itasks_db_version) { //NEW VERSION OF DATABASE
-        $sql .= "CREATE TABLE " . $tbl_itasks_tasks  . " (
+        $sql = "CREATE TABLE " . $tbl_itasks_tasks  . " (
 	    id int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	    tasks varchar(500) NULL,
 	    tasks_status varchar(20) NULL,
