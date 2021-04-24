@@ -22,24 +22,24 @@ function itasks_add_form_handler(){
 		'tasks_start_date'=> $itasks_startdate,
 		'tasks_end_date'=>$itasks_enddate,
 		'tasks_remarks'=>$itasks_remarks,
-		//'tasks_file'=>$itasks_file
+		'tasks_file_link'=>''
 	);
 	if (isset($_REQUEST['nonce']) && wp_verify_nonce($_REQUEST['nonce'], 'itasks-form-nonce')) {
 		$warningArr = itasksAddValidate($args);
 		$args['tasks_start_date']= date("Y/m/d", strtotime($itasks_startdate));
 		$args['tasks_end_date']= date("Y/m/d", strtotime($itasks_enddate));
-
-		if ( ! function_exists( 'wp_handle_upload' ) ) {
-	                require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		if(get_site_option('allow_attachment')== 1) {
+			if ( ! function_exists( 'wp_handle_upload' ) ) {
+	                	require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			}
+		        $upload_overrides = array('test_form'=>false);
+	        	$movefile = wp_handle_upload($itasks_file, $upload_overrides);
+		        if($movefile && !isset($movefile['error'])){
+		                 $args['tasks_file_link'] = $movefile['url'];
+	        	} else {
+	                	$warningArr = array($movefile['error']);
+			}
 		}
-	        $upload_overrides = array('test_form'=>false);
-	        $movefile = wp_handle_upload($itasks_file, $upload_overrides);
-	        if($movefile && !isset($movefile['error'])){
-	                 $args['tasks_file_link'] = $movefile['url'];
-	        } else {
-	                $warningArr = array($movefile['error']);
-		}
-
 		if($warningArr === true && empty($itasks_id)){
 			itasksFileUpload($itasks_file);
 			$result = $wpdb->insert($table_name, $args);
@@ -162,12 +162,14 @@ function itasks_add_form_metabox($args){
 		<textarea id="itasks_remarks" name="itasks_remarks" rows="4" cols="60"><?php echo esc_attr($args['tasks_remarks'])?></textarea>
 	    </td>
 	</tr>
+	<?php if(get_site_option('allow_attachment')== 1) { ?>
 	<tr>
 	    <td>Attachment</td>
 	    <td>
 		<input id="itasks_file" name="itasks_file" type="file" style="width:100%;" />
 	    </td>
 	</tr>
+	<?php  } ?>
         </tbody>
     </table>
 <?php

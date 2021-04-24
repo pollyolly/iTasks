@@ -2,31 +2,25 @@
 
 function itasks_settings_form_handler(){
 	$message = '';
-	//$superRole = isset($_REQUEST['super_role']) ? absint($_REQUEST['super_role']) : 0;
-	//$adminRole = isset($_REQUEST['admin_role']) ? absint($_REQUEST['admin_role']) : 0;
-	$editorRole = isset($_REQUEST['editor_role']) ? absint($_REQUEST['editor_role']) : 0;
-	$authorRole = isset($_REQUEST['author_role']) ? absint($_REQUEST['author_role']) : 0;
-	$contributorRole = isset($_REQUEST['contributor_role']) ? absint($_REQUEST['contributor_role']) : 0;
+	$allowAttachment = isset($_REQUEST['allow_attachment']) ? absint($_REQUEST['allow_attachment']) : 0;
+	$allowExport = isset($_REQUEST['allow_export']) ? absint($_REQUEST['allow_export']) : 0;
+	$allowBackup = isset($_REQUEST['allow_backup']) ? absint($_REQUEST['allow_backup']) : 0;
 	$messagesArr = array();
 	$args = array(
-		//'super_role'=>$superRole,
-		//'admin_role'=>$adminRole,
-		'editor_role'=>$editorRole,
-		'author_role'=>$authorRole,
-		'contributor_role'=>$contributorRole
+		'allow_attachment'=>$allowAttachment,
+		'allow_export'=>$allowExport,
+		'allow_backup'=>$allowBackup
 	);
 	if (isset($_REQUEST['nonce']) && wp_verify_nonce($_REQUEST['nonce'], 'itasks-form-nonce')) {
 		$messagesArr = itasksSettingsValidate($args);
 		if($messagesArr === true) {
-			//update_option('super_role', $superRole);
-			//update_option('admin_role', $adminRole);
-			update_option('editor_role', $editorRole);
-			update_option('author_role', $authorRole);
-			update_option('contributor_role', $contributorRole);
+			update_option('allow_attachment', $allowAttachment);
+			update_option('allow_export', $allowExport);
+			update_option('allow_backup', $allowBackup);
 			$message = 'Successfuly updated!';
 		}
 	}
-	add_meta_box('itasks_settings_form_id', 'Roles', 'itasks_settings_form_metabox', 'itasks_settings_form', 'normal', 'default');
+	add_meta_box('itasks_settings_form_id', 'Form', 'itasks_settings_form_metabox', 'itasks_settings_form', 'normal', 'default');
 ?>
 <div class="wrap">
 	<h2>Settings
@@ -64,48 +58,14 @@ function itasks_settings_form_metabox($args){
 ?>
 <table cellspacing="2" cellpadding="5" class="form-table">
         <tbody>
-        <!-- tr>
-	    <td>Super Admin</td>
-	    <td>
-                <select name="super_role" style="width:100%;">
-                <option value='' >Choose</option>
-		<?php
-                foreach($selectValues as $key => $text){
-	                if(get_site_option('super_role') == $key){
-		                echo "<option selected value='{$key}'>".__($text,'itasks')."</option>";
-                        } else {
-                                echo "<option value='{$key}'>".__($text,'itasks')."</option>";
-                        }
-                }
-		?>
-                </select>
-	    </td>
-	</tr -->
-	<!-- tr>
-	    <td>Administrator</td>
-	    <td>
-		<select name="admin_role" style="width:100%;">
-                <option value='' >Choose</option>
-		<?php
-                foreach($selectValues as $key => $text){
-	                if(get_site_option('admin_role') == $key){
-		                echo "<option selected value='{$key}'>".__($text,'itasks')."</option>";
-                        } else {
-                                echo "<option value='{$key}'>".__($text,'itasks')."</option>";
-                        }
-                }
-		?>
-                </select>
-	    </td>
-	</tr -->
 	<tr>
-	    <td>Editor</td>
+	    <td>Attachment</td>
 	    <td>
-		<select name="editor_role" style="width:100%;">
+		<select name="allow_attachment" style="width:100%;">
                 <option value='' >Choose</option>
 		<?php
                 foreach($selectValues as $key => $text){
-	                if(get_site_option('editor_role') == $key){
+	                if(get_site_option('allow_attachment') == $key){
 		                echo "<option selected value='{$key}'>".__($text,'itasks')."</option>";
                         } else {
                                 echo "<option value='{$key}'>".__($text,'itasks')."</option>";
@@ -116,13 +76,13 @@ function itasks_settings_form_metabox($args){
 	    </td>
 	</tr>
 	<tr>
-	    <td>Author</td>
+	    <td>Export</td>
 	    <td>
-		<select name="author_role" style="width:100%;">
+		<select name="allow_export" style="width:100%;">
                 <option value='' >Choose</option>
 		<?php
                 foreach($selectValues as $key => $text){
-	                if(get_site_option('author_role') == $key){
+	                if(get_site_option('allow_export') == $key){
 		                echo "<option selected value='{$key}'>".__($text,'itasks')."</option>";
                         } else {
                                 echo "<option value='{$key}'>".__($text,'itasks')."</option>";
@@ -133,13 +93,13 @@ function itasks_settings_form_metabox($args){
 	    </td>
 	</tr>
 	<tr>
-	    <td>Contributor</td>
+	    <td>Backup</td>
 	    <td>
-		<select name="contributor_role" style="width:100%;">
+		<select name="allow_backup" style="width:100%;">
                 <option value='' >Choose</option>
 		<?php
                 foreach($selectValues as $key => $text){
-	                if(get_site_option('contributor_role') == $key){
+	                if(get_site_option('allow_backup') == $key){
 		                echo "<option selected value='{$key}'>".__($text,'itasks')."</option>";
                         } else {
                                 echo "<option value='{$key}'>".__($text,'itasks')."</option>";
@@ -156,11 +116,9 @@ function itasks_settings_form_metabox($args){
 }
 function itasksSettingsValidate($args=array()){
 	$messages = array();
-        //if (empty($args['super_role'])) $messages[] = __('Super Admin field is empty!','itasks');
-        //if (empty($args['admin_role']))  $messages[] = __('Admin field is empty!','itasks');
-        if (empty($args['editor_role']))  $messages[] = __('Editor field is empty!','itasks');
-        if (empty($args['author_role'])) $messages[] = __('Author field is empty!','itasks');
-        if (empty($args['contributor_role']))  $messages[] = __('Contributor field is empty!','itasks');
+        if (empty($args['allow_attachment']))  $messages[] = __('Attachment field is empty!','itasks');
+        if (empty($args['allow_export'])) $messages[] = __('Export field is empty!','itasks');
+        if (empty($args['allow_backup']))  $messages[] = __('Backup field is empty!','itasks');
         if (empty($messages)) return true; //True if Messages are empty
         return $messages;
 }
