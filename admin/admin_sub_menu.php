@@ -19,9 +19,17 @@ function itasks_admin_menu(){
 		'itasks',
 		'Add Tasks',
 		'Add Tasks',
-		'edit_posts',
+		'upload_files',
 		'itasks-form',
 		'itasks_add_form_handler'
+	);
+	add_submenu_page(
+		'itasks',
+		'Settings',
+		'Settings',
+		'edit_posts',
+		'itasks-settings',
+		'itasks_settings_form_handler'
 	);
 	remove_submenu_page('itasks','itasks'); //Remove first submenu 
 }

@@ -31,7 +31,9 @@ class Tasks_table_class extends \WP_List_Table {
 		case 'tasks_end_date':
 			return $item->tasks_end_date;
 		case 'tasks_remarks':
-                       return $item->tasks_remarks;
+			return $item->tasks_remarks;
+		case 'tasks_file_link':
+			return $item->tasks_file_link;
                default:
 	               return isset( $item->$column_name ) ? $item->$column_name : '';
          }
@@ -44,7 +46,8 @@ class Tasks_table_class extends \WP_List_Table {
 			'tasks_priority'      => __( 'Priority', 'itasks' ),
         	        'tasks_start_date'      => __( 'Start Date', 'itasks' ),
         	        'tasks_end_date'      => __( 'End Date', 'itasks' ),
-        	        'tasks_remarks'      => __( 'Remarks', 'itasks' ),
+			'tasks_remarks'      => __( 'Remarks', 'itasks' ),
+			'tasks_file_link'    => __('Attachments','itasks')
 	        );
         	return $columns;
      	}

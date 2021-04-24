@@ -24,7 +24,8 @@ function itasks_install(){
       tasks_priority varchar(20) NULL,
       tasks_start_date varchar(20) NULL,
       tasks_end_date varchar(20) NULL,
-      tasks_remarks varchar(500) NULL
+      tasks_remarks varchar(500) NULL,
+      tasks_file_link varchar(500) NULL
     );";
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
@@ -38,7 +39,8 @@ function itasks_install(){
 	    tasks_priority varchar(20) NULL,
 	    tasks_start_date varchar(20) NULL,
 	    tasks_end_date varchar(20) NULL,
-	    tasks_remarks varchar(500) NULL
+	    tasks_remarks varchar(500) NULL,
+	    tasks_file_link varchar(500)
 	  );";
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
@@ -94,6 +96,7 @@ include_once (plugin_dir_path(__FILE__)  . '/tables/Settings_table_class.php');
  */
 //Forms
 include_once (plugin_dir_path(__FILE__)  . '/forms/Add_form.php');
+include_once (plugin_dir_path(__FILE__)  . '/forms/Settings_form.php');
 
 //Tables
 include_once (plugin_dir_path(__FILE__)  . '/tables/Tasks_table_class.php');
