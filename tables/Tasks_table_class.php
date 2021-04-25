@@ -75,6 +75,9 @@ class Tasks_table_class extends \WP_List_Table {
 	            '<input type="checkbox" name="tasks_id[]" value="%d" />', $item->id
         	);
 	}
+	function column_tasks_file_link($item){
+		return (get_site_option('allow_attachment')==1) ? sprintf('<a href="%s" target="_blank">%s</a>', $item->tasks_file_link, basename($item->tasks_file_link)) : '';
+	}
 	function get_sortable_columns() {
         	$sortable_columns = array(
 			'tasks' => array( 'tasks', true ),
@@ -83,7 +86,6 @@ class Tasks_table_class extends \WP_List_Table {
         	);
         	return $sortable_columns;
     	}
-
 	function get_bulk_actions() {
         	$actions = array(
 			'delete'  => __( 'Delete', 'itasks' ),
@@ -97,6 +99,10 @@ class Tasks_table_class extends \WP_List_Table {
 
 	        );
         	return $actions;
+	}
+	function extra_tablenav($which){
+		if(get_site_option('allow_export')==1) echo sprintf('<input type="submit" class="button action" name="export_csv" id="export_csv" value="%s" style="margin-right:15px;"/>',__('Export as CSV','itasks'));
+		if(get_site_option('allow_backup')==1) echo sprintf('<input type="submit" class="button action" name="backup_database" id="backup_database" value="%s" />',__('Backup Database','itasks'));
 	}
 	function process_bulk_action(){
 		global $wpdb;
@@ -137,6 +143,48 @@ class Tasks_table_class extends \WP_List_Table {
 			}
 		}
 	}
+	function process_export_as_csv(){
+		global $wpdb;
+		$dataArr = array();
+		$table_name = "{$wpdb->prefix}itasks_tasks";
+		if(isset($_REQUEST['export_csv'])){
+			$idss = $_REQUEST['tasks_id'];
+			$valid_ids = array_map('esc_attr', $idss);
+			$ids = implode(',', $valid_ids);
+			$dataArr = $wpdb->get_results("SELECT * FROM {$table_name} WHERE id IN ({$ids})",ARRAY_A); //ARRAY_A make output as assoc array
+			if(empty($dataArr)){
+				return null;	
+			}
+			ob_end_clean();
+			$openf = fopen("php://output",'w');
+			fputcsv($openf, array_keys(reset($dataArr)));
+			foreach($dataArr as $row){
+				fputcsv($openf, $row);
+			}
+			fclose($openf);
+			$this->download_send_headers("data_export_".date('Y-m-d').".csv");
+			echo ob_get_clean();
+			die();
+		}
+	}
+	function download_send_headers($filename) {
+	// disable caching
+		$now = gmdate("D, d M Y H:i:s");
+		header("Expires: Tue, 03 Jul 2001 06:00:00 GMT");
+		header("Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate");
+		header("Last-Modified: {$now} GMT");
+		// force download  
+		header("Content-Type: application/force-download");
+		header("Content-Type: application/octet-stream");
+		header("Content-Type: application/download");
+		// disposition / encoding on response body
+		header("Content-Disposition: attachment;filename={$filename}");
+		header('Content-Type: text/csv; charset=utf-8');
+		//header("Content-Transfer-Encoding: binary");
+	}
+	function process_backup_database(){
+		//var_dump($_REQUEST['backup_database']);
+	}
 	/*function get_views_() {
         	$status_links   = array();
 	        $base_link      = admin_url( 'admin.php?page=contact-box' );
@@ -153,7 +201,7 @@ class Tasks_table_class extends \WP_List_Table {
 	        $hidden                = array();
         	$sortable              = $this->get_sortable_columns();
 	        $this->_column_headers = array( $columns, $hidden, $sortable );
-
+		
 		if(isset($_REQUEST['page_load'])){
 			if(in_array($_REQUEST['page_load'],array(10,25,50))){
 				update_option('itasks_per_page', $_REQUEST['page_load']);
@@ -170,6 +218,8 @@ class Tasks_table_class extends \WP_List_Table {
 
 		$total_items = 0;
 		$this->process_bulk_action();
+		$this->process_export_as_csv();
+		$this->process_backup_database();
 
 	        $args = array(
         	    'offset' => $offset,
