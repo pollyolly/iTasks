@@ -143,6 +143,11 @@ class Tasks_table_class extends \WP_List_Table {
 			}
 		}
 	}
+	function process_backup_database(){
+		if(isset($_REQUEST['backup_database'])){
+			shell_exec('mysqldump --opt -h '.DB_HOST.' -u'.DB_USER.' -p'.DB_PASSWORD.' '.DB_NAME.'>'.' /var/tmp/daily_backup.sql');
+		}
+	}
 	function process_export_as_csv(){
 		global $wpdb;
 		$dataArr = array();
@@ -181,9 +186,6 @@ class Tasks_table_class extends \WP_List_Table {
 		header("Content-Disposition: attachment;filename={$filename}");
 		header('Content-Type: text/csv; charset=utf-8');
 		//header("Content-Transfer-Encoding: binary");
-	}
-	function process_backup_database(){
-		//var_dump($_REQUEST['backup_database']);
 	}
 	/*function get_views_() {
         	$status_links   = array();
