@@ -144,8 +144,10 @@ class Tasks_table_class extends \WP_List_Table {
 		}
 	}
 	function process_backup_database(){
+		global $wpdb;
+		$table_name = "{$wpdb->prefix}itasks_tasks";
 		if(isset($_REQUEST['backup_database'])){
-			shell_exec('mysqldump --opt -h '.DB_HOST.' -u'.DB_USER.' -p'.DB_PASSWORD.' '.DB_NAME.'>'.' /var/tmp/daily_backup.sql');
+			shell_exec('mysqldump --opt -h '.DB_HOST.' -u'.DB_USER.' -p'.DB_PASSWORD.' '.DB_NAME.' '.$table_name.'>'.' /var/tmp/itasks_backup.sql');
 		}
 	}
 	function process_export_as_csv(){
