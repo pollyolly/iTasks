@@ -7,6 +7,14 @@ function itasks_admin_menu(){
 		'itasks',
 		'itasks_tasks_list_handler'
 	);
+	$link_our_new_CPT = 'edit.php?post_type=tasks_post';
+	add_submenu_page(
+		'itasks',
+		'Tasks Post',
+		'Tasks Post',
+		'edit_posts',
+		$link_our_new_CPT
+	);
 	add_submenu_page(
 		'itasks',
 		'Tasks',

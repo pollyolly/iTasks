@@ -52,30 +52,32 @@ register_activation_hook(__FILE__, 'itasks_install');
 function itasks_install_data(){
 	global $wpdb;
 	$tbl_itasks_tasks  = "{$wpdb->prefix}itasks_tasks";
-	$tasks_data = array(
-	    array('tasks' => 'Tasks Demo1','tasks_status'=>'Ongoing','tasks_priority' => 'High',
-	    	  'tasks_start_date'=>'2021/03/01', 'tasks_end_date'=>'2021/03/07', 'tasks_remarks'=>'Remarks 1'),
-	    array('tasks' => 'Tasks Demo2','tasks_status'=>'Done','tasks_priority' => 'Least', 
-	    	  'tasks_start_date'=>'2021/03/14', 'tasks_end_date'=>'2021/03/20', 'tasks_remarks'=>'Remarks 2'),
-	    array('tasks' => 'Tasks Demo3','tasks_status'=>'Pending','tasks_priority' => 'Medium', 
-	    	  'tasks_start_date'=>'2021/02/06', 'tasks_end_date'=>'2021/02/12', 'tasks_remarks'=>'Remarks 3'),
-	    array('tasks' => 'Tasks Demo4','tasks_status'=>'Overdue','tasks_priority' => 'Least', 
-	    	  'tasks_start_date'=>'2021/01/01', 'tasks_end_date'=>'2021/01/01', 'tasks_remarks'=>'Remarks 4'),
-	    array('tasks' => 'Tasks Demo5','tasks_status'=>'Pending','tasks_priority' => 'High', 
-	    	  'tasks_start_date'=>'2021/04/29', 'tasks_end_date'=>'2021/04/30', 'tasks_remarks'=>'Remarks 5'),
-	    array('tasks' => 'Tasks Demo6','tasks_status'=>'Done','tasks_priority' => 'Medium', 
-	    	  'tasks_start_date'=>'2021/04/23', 'tasks_end_date'=>'2021/04/25', 'tasks_remarks'=>'Remarks 6')
-	);
-	$insertQuery = " INSERT INTO {$tbl_itasks_tasks} (".implode(",",array_keys($tasks_data[0])) .") VALUES ";
-	foreach($tasks_data as $dataArray){
-		$values = array();
-		foreach($dataArray as $column=>$value){
-			$values [] = "'".$value."'";	
+	$check_empty = (int)$wpdb->get_var("SELECT COUNT(*) FROM ".$tbl_itasks_tasks);
+	if($check_empty < 1){
+		$tasks_data = array(
+	    		array('tasks' => 'Tasks Demo1','tasks_status'=>'Ongoing','tasks_priority' => 'High',
+	    	  		'tasks_start_date'=>'2021/03/01', 'tasks_end_date'=>'2021/03/07', 'tasks_remarks'=>'Remarks 1'),
+	    		array('tasks' => 'Tasks Demo2','tasks_status'=>'Done','tasks_priority' => 'Least', 
+	    	  		'tasks_start_date'=>'2021/03/14', 'tasks_end_date'=>'2021/03/20', 'tasks_remarks'=>'Remarks 2'),
+	    		array('tasks' => 'Tasks Demo3','tasks_status'=>'Pending','tasks_priority' => 'Medium', 
+	    	  		'tasks_start_date'=>'2021/02/06', 'tasks_end_date'=>'2021/02/12', 'tasks_remarks'=>'Remarks 3'),
+	    		array('tasks' => 'Tasks Demo4','tasks_status'=>'Overdue','tasks_priority' => 'Least', 
+	    	  		'tasks_start_date'=>'2021/01/01', 'tasks_end_date'=>'2021/01/01', 'tasks_remarks'=>'Remarks 4'),
+	    		array('tasks' => 'Tasks Demo5','tasks_status'=>'Pending','tasks_priority' => 'High', 
+	    	  		'tasks_start_date'=>'2021/04/29', 'tasks_end_date'=>'2021/04/30', 'tasks_remarks'=>'Remarks 5'),
+	    		array('tasks' => 'Tasks Demo6','tasks_status'=>'Done','tasks_priority' => 'Medium', 
+	    	  		'tasks_start_date'=>'2021/04/23', 'tasks_end_date'=>'2021/04/25', 'tasks_remarks'=>'Remarks 6')
+		);
+		$insertQuery = " INSERT INTO {$tbl_itasks_tasks} (".implode(",",array_keys($tasks_data[0])) .") VALUES ";
+		foreach($tasks_data as $dataArray){
+			$values = array();
+			foreach($dataArray as $column=>$value){
+				$values [] = "'".$value."'";	
+			}
+			$insertQuery .= " (". implode(",",$values) ."),";
 		}
-		$insertQuery .= " (". implode(",",$values) ."),";
+		$wpdb->query(substr($insertQuery,0,-1)); //Remove last string
 	}
-	$wpdb->query(substr($insertQuery,0,-1)); //Remove last string
-
 }
 register_activation_hook(__FILE__, 'itasks_install_data');
 
@@ -104,6 +106,9 @@ include_once (plugin_dir_path(__FILE__)  . '/tables/Tasks_table_class.php');
 include_once (plugin_dir_path(__FILE__) . '/admin/admin_sub_menu.php');
 //Dashboard
 include_once (plugin_dir_path(__FILE__) . '/dashboard/Report_widget.php');
+//Posts
+include_once (plugin_dir_path(__FILE__) . '/forms/Task_posts.php');
+
 /*
 //AJAX
 include_once (plugin_dir_path(__FILE__) . '/ajax/ajax-calls.php');
