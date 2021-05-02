@@ -107,7 +107,8 @@ include_once (plugin_dir_path(__FILE__) . '/admin/admin_sub_menu.php');
 //Dashboard
 include_once (plugin_dir_path(__FILE__) . '/dashboard/Report_widget.php');
 //Posts
-include_once (plugin_dir_path(__FILE__) . '/forms/Task_posts.php');
+include_once (plugin_dir_path(__FILE__) . '/post_types/Task_posts.php');
+include_once (plugin_dir_path(__FILE__) . '/post_types/Task_pages.php');
 
 /*
 //AJAX
